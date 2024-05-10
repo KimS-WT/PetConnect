@@ -41,6 +41,28 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Pet.Description)
         </dd>
+        <!-- Displaying Shelter details if it exists -->
+        @if (Model.Pet.Shelters != null)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Pet.Shelters.Name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Pet.Shelters.Name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Pet.Shelters.Location)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Pet.Shelters.Location)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Pet.Shelters.ContactInfo)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.Pet.Shelters.ContactInfo)
+            </dd>
+        }
     </dl>
 </div>
 <div>

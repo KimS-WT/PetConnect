@@ -8,5 +8,7 @@ namespace PetConnect.Models
 		{
 		}
 		public DbSet<Pet> Pets {get; set;} = default!;
+		public DbSet<Shelter> Shelters { get; set; } = default!;
+		public DbSet<User> Users { get; set; } = default!;
 	}
 }

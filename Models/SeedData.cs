@@ -8,6 +8,40 @@ namespace PetConnect.Models
             using (var context = new PetDbContext(
               serviceProvider.GetRequiredService<DbContextOptions<PetDbContext>>()))
             {
+                // Check if any users already exist and return if so
+                if (context.Users.Any())
+                {
+                    return;   // DB has been seeded
+                }
+
+                context.Users.AddRange(
+                    new User
+                    {
+                        Username = "user1",
+                        Email = "user1@example.com",
+                        Password = "123",
+                        Role = "Admin"
+                    },
+                    new User
+                    {
+                        Username = "user2",
+                        Email = "user2@example.com",
+                        Password = "123",
+                        Role = "User"
+                    }
+                );
+
+                context.SaveChanges();
+                // Look for shelters
+                if (!context.Shelters.Any())
+                {
+                    context.Shelters.AddRange(
+                        new Shelter { Name = "Safe Haven", Location = "1234 Liberty Ave", ContactInfo = "555-1234" },
+                        new Shelter { Name = "Happy Tails", Location = "5678 Freedom St", ContactInfo = "555-5678" }
+                    );
+                    context.SaveChanges();
+                }
+
                 // Look for any Pets.
                 if (context.Pets.Any())
                 {
@@ -53,6 +87,38 @@ namespace PetConnect.Models
                 );
 
                 context.SaveChanges();
+
+                var random = new Random();  // For generating random numbers
+                var availableShelters = context.Shelters.ToList();  // Ensure this is called before the loop
+
+                if (!availableShelters.Any())
+                {
+                    Console.WriteLine("No shelters available to assign!");
+                    return;  // Exit if no shelters are available
+                }
+
+                try
+                {
+                    // Efficiently query only the needed data
+                    var petIdsWithoutShelter = context.Pets
+                        .Where(p => p.ShelterId == null)
+                        .Select(p => p.PetId)
+                        .ToList();
+
+                    foreach (var petId in petIdsWithoutShelter)
+                    {
+                        var randomShelter = availableShelters[random.Next(availableShelters.Count)];
+                        var petToUpdate = new Pet { PetId = petId, ShelterId = randomShelter.ShelterId };
+                        context.Pets.Attach(petToUpdate);
+                        context.Entry(petToUpdate).Property(x => x.ShelterId).IsModified = true;
+                    }
+
+                    context.SaveChanges();  // Save the changes to the database
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while updating pets with shelters: {ex.Message}");
+                }
             }
         }
     }

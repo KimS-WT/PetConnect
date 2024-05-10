@@ -27,7 +27,7 @@ namespace PetConnect.Pages_Pets
                 return NotFound();
             }
 
-            var pet = await _context.Pets.FirstOrDefaultAsync(m => m.PetId == id);
+            var pet = await _context.Pets.Include(m => m.Shelters).FirstOrDefaultAsync(m => m.PetId == id);
             if (pet == null)
             {
                 return NotFound();
