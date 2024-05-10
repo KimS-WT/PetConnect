@@ -1,0 +1,95 @@
+@page
+@model PetConnect.Pages_Pets.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<form method="get" class="form-inline">
+    <input type="text" name="SearchString" value="@Model.SearchString" placeholder="Search by name..." class="form-control mb-2 mr-sm-2" />
+    <input type="text" name="PetSpecies" value="@Model.PetSpecies" placeholder="Filter by species..." class="form-control mb-2 mr-sm-2" />
+
+    <select name="sortOrder" class="form-control mb-2 mr-sm-2">
+        <option value="">Sort by...</option>
+        <option value="name_asc">Name Ascending</option>
+        <option value="name_desc">Name Descending</option>
+        <option value="age_asc">Age Ascending</option>
+        <option value="age_desc">Age Descending</option>
+    </select>
+
+    <button type="submit" class="btn btn-primary mb-2">Apply</button>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Pet[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pet[0].Age)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pet[0].Species)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pet[0].Breed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pet[0].Description)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" asp-page="./Index" asp-route-currentPage="@(Model.CurrentPage - 1)">Previous</a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-page="./Index" asp-route-currentPage="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" asp-page="./Index" asp-route-currentPage="@(Model.CurrentPage + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
+}
+@foreach (var item in Model.Pet) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Species)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Breed)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.PetId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.PetId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.PetId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
